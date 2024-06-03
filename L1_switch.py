@@ -200,7 +200,7 @@ if __name__ == "__main__":
     activate_topology(topology_name)
 
     # 远程设备登录信息
-    ip = '10.160.18.237'
+    ip = '10.160.18.223'
     username = 'admin'
     password = 'a'
     command = 'execute reboot'
@@ -229,6 +229,8 @@ if __name__ == "__main__":
     telnet_conn.send_command(command_os)
     telnet_conn.get_output('(y/n)')
     telnet_conn.send_command('y')
+    if telnet_conn.get_output('(y/n)'):
+        telnet_conn.send_command('y')
     time.sleep(30)
     telnet_conn.send_command('')
     time.sleep(600)
