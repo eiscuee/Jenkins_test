@@ -195,6 +195,8 @@ if __name__ == "__main__":
     # 从环境变量获取参数
     topology_name = os.getenv('TOPOLOGY_NAME')
     atp = os.getenv('ATP')
+    print(atp)
+    print(topology_name)
     activate_topology(topology_name)
     
     # 远程设备登录信息
