@@ -205,8 +205,9 @@ if __name__ == "__main__":
     password = 'a'
     os_file = f"{atp['os_prefix']}-v{atp['os_image_info']['version']}-build{atp['os_build']}-FORTINET.out"
     apdb_file = ', '.join(entry['file'] for entry in atp['signature']['apdb'])
-    command_os = f'execute restore image tftp {os_file} {atp['ftp']}'
-    command_apdb = f'execute restore ips tftp {apdb_file} {atp['ftp']}'
+    ip = atp['ftp']
+    command_os = f'execute restore image tftp {os_file} {ip}'
+    command_apdb = f'execute restore ips tftp {apdb_file} {ip}'
 
     # 创建 TelnetConnection 对象并执行命令
     telnet_conn = TelnetConnection(ip)
