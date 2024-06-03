@@ -195,7 +195,7 @@ if __name__ == "__main__":
     # 从环境变量获取参数
     topology_name = os.getenv('TOPOLOGY_NAME')
     atp_str = os.getenv('ATP')
-    #atp = {"ftp": "10.160.90.106", "os_image": "", "os_image_info": {"project": "FortiOS", "version": "7", "build": "0656", "file_pattern": "FGT_3501F-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.0.16dev", "os_build": "0656", "os_prefix": "FGT_3501F", "os_label": "Interim Build < Target Version >", "ips_image": "", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0183", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3}\\.pkg", "branch": "main"}, "ips_ver": "7.0.16dev", "ips_build": "0183", "ips_label": "Interim Build", "config": "test-config-BMRK2", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "27.794", "file": "/apdb/apdb-700-27.794.pkg"}], "fmwp": [], "iotd": [], "isdb": [{"version": "27.794", "file": "/isdb/isdb-700-27.794.pkg"}], "nids": [{"version": "27.794", "file": "/nids/nids-700-27.794.pkg"}], "otdb": [], "otdp": [], "avdb": [{"version": "92.04693", "file": "/avdb/vsigupdate-OS7.0.0_92.04693.ETDB.High.pkg"}], "exdb": [{"version": "92.04510", "file": "/exdb/vsigupdate-OS7.0.0_92.04510.EXDB.pkg"}], "mmdb": [{"version": "92.04693", "file": "/mmdb/vsigupdate-OS7.0.0_92.04693.MMDB.pkg"}], "fldb": [{"version": "92.04693", "file": "/fldb/vsigupdate-OS7.0.0_92.04693.FLDB.pkg"}], "avai": [{"version": "2.16370", "file": "/avai/vsigupdate-OS7.0.0_2.16370.AVAI.pkg"}]}, "signature_path": "signature/7.0"}
+    #atp = {"ftp": "10.160.57.62", "os_image": "", "os_image_info": {"project": "FortiOS", "version": "7", "build": "3376", "file_pattern": "FGT_3501F-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.4.4dev", "os_build": "3376", "os_prefix": "FGT_3501F", "os_label": "Interim Build < Target Version >", "ips_image": "", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0183", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3}\\.pkg", "branch": "main"}, "ips_ver": "7.0.16dev", "ips_build": "0183", "ips_label": "Interim Build", "config": "test-config-BMRK2", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "27.789", "file": "apdb_OS7.4.0_27.00789.APDB.pkg"}], "fmwp": [], "iotd": [], "isdb": [{"version": "27.785", "file": "isdb_OS7.4.0_27.00785.ISDB.pkg"}], "nids": [{"version": "27.790", "file": "nids_OS7.4.0_27.00790.NIDS.pkg"}], "otdb": [], "otdp": [], "etdb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.ETDB.High.pkg"}], "exdb": [{"version": "92.04510", "file": "/exdb/vsigupdate-OS7.0.0_92.04510.EXDB.pkg"}], "mmdb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.MMDB.pkg"}], "fldb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.FLDB.pkg"}], "avai": [{"version": "2.16370", "file": "/avai/vsigupdate-OS7.0.0_2.16370.AVAI.pkg"}]}, "signature_path": "signature/7.0"}
     atp = json.loads(atp_str)
     activate_topology(topology_name)
 
@@ -206,34 +206,63 @@ if __name__ == "__main__":
     command = 'execute reboot'
     os_file = f"{atp['os_prefix']}-v{atp['os_image_info']['version']}-build{atp['os_build']}-FORTINET.out"
     mmdb_file = ', '.join(entry['file'] for entry in atp['signature']['mmdb'])
-    command_os = f"execute restore image tftp {os_file} 10.160.57.62"
+    fldb_file = ', '.join(entry['file'] for entry in atp['signature']['fldb'])
+    etdb_file = ', '.join(entry['file'] for entry in atp['signature']['etdb'])
+    apdb_file = ', '.join(entry['file'] for entry in atp['signature']['apdb'])
+    nids_file = ', '.join(entry['file'] for entry in atp['signature']['nids'])
+    isdb_file = ', '.join(entry['file'] for entry in atp['signature']['isdb'])
+    command_os = f"execute restore image tftp {os_file} {atp['ftp']}"
     command_mmdb = f"execute restore av tftp {mmdb_file} {atp['ftp']}"
-    print(command_os)
+    command_fldb = f"execute restore av tftp {fldb_file} {atp['ftp']}"
+    command_etdb = f"execute restore av tftp {etdb_file} {atp['ftp']}"
+    command_apdb = f"execute restore ips tftp {apdb_file} {atp['ftp']}"
+    command_nids = f"execute restore ips tftp {nids_file} {atp['ftp']}"
+    command_isdb = f"execute restore ips tftp {isdb_file} {atp['ftp']}"
 
     # 创建 TelnetConnection 对象并执行命令
     telnet_conn = TelnetConnection(ip)
     telnet_conn.connect()
-    time.sleep(2)
     telnet_conn.login(username, password)
-    time.sleep(10)
+    time.sleep(5)
     telnet_conn.send_command('c g')
-    time.sleep(3)
+    time.sleep(6)
     telnet_conn.send_command(command_os)
-    time.sleep(10)
+    telnet_conn.get_output('(y/n)')
     telnet_conn.send_command('y')
+    time.sleep(30)
+    telnet_conn.send_command('')
     time.sleep(600)
     telnet_conn.disconnect()
 
     time.sleep(180)
     telnet_conn = TelnetConnection(ip)
     telnet_conn.connect()
-    time.sleep(2)
     telnet_conn.login(username, password)
-    time.sleep(10)
+    time.sleep(5)
     telnet_conn.send_command('c g')
     time.sleep(3)
     telnet_conn.send_command(command_mmdb)
-    time.sleep(10)
+    telnet_conn.get_output('(y/n)')
     telnet_conn.send_command('y')
-    time.sleep(600)
+    time.sleep(60)
+    telnet_conn.send_command(command_fldb)
+    telnet_conn.get_output('(y/n)')
+    telnet_conn.send_command('y')
+    time.sleep(60)
+    telnet_conn.send_command(command_etdb)
+    telnet_conn.get_output('(y/n)')
+    telnet_conn.send_command('y')
+    time.sleep(60)
+    telnet_conn.send_command(command_apdb)
+    telnet_conn.get_output('(y/n)')
+    telnet_conn.send_command('y')
+    time.sleep(60)
+    telnet_conn.send_command(command_nids)
+    telnet_conn.get_output('(y/n)')
+    telnet_conn.send_command('y')
+    time.sleep(60)
+    telnet_conn.send_command(command_isdb)
+    telnet_conn.get_output('(y/n)')
+    telnet_conn.send_command('y')
+    time.sleep(60)
     telnet_conn.disconnect()
