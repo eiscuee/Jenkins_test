@@ -193,20 +193,14 @@ class TelnetConnection:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # 从环境变量获取参数
-    atp_str = os.getenv('ATP')
-    atp = json.loads(atp_str)
-    topology_name = os.getenv('TOPOLOGY_NAME')
-    activate_topology(topology_name)
+    #topology_name = os.getenv('TOPOLOGY_NAME')
+    #activate_topology(topology_name)
 
     # 远程设备登录信息
     ip = '10.160.18.237'
     username = 'admin'
     password = 'a'
-    os_file = f"{atp['os_prefix']}-v{atp['os_image_info']['version']}-build{atp['os_build']}-FORTINET.out"
-    apdb_file = ', '.join(entry['file'] for entry in atp['signature']['apdb'])
-    ip = atp['ftp']
-    command_os = f'execute restore image tftp {os_file} {ip}'
-    command_apdb = f'execute restore ips tftp {apdb_file} {ip}'
+    command = 'execute reboot'
 
     # 创建 TelnetConnection 对象并执行命令
     telnet_conn = TelnetConnection(ip)
@@ -216,7 +210,7 @@ if __name__ == "__main__":
     time.sleep(10)
     telnet_conn.send_command('c g')
     time.sleep(3)
-    telnet_conn.send_command(command_os)
+    telnet_conn.send_command(command)
     time.sleep(3)
     telnet_conn.send_command('y')
     telnet_conn.disconnect()
