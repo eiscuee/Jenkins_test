@@ -77,8 +77,9 @@ def net_scout_sw_instance():
     return NetScoutSw(ip, user, password)
 
 
-def test_activate_topology(net_scout_sw_instance, topology_name):
+def test_activate_topology(net_scout_sw_instance):
     sw = net_scout_sw_instance
+    topology_name = pytest.config.getoption('--topology_name')
     response_activate = response_activate = sw.operate_topology(topology_name, "activate")
     assert "Successful" in response_activate["message"]
     
@@ -86,8 +87,9 @@ def test_activate_topology(net_scout_sw_instance, topology_name):
     sw.logout()
 
 
-def test_deactivate_topology(net_scout_sw_instance, topology_name):
+def test_deactivate_topology(net_scout_sw_instance):
     sw = net_scout_sw_instance
+    topology_name = pytest.config.getoption('--topology_name')
     response_activate = response_activate = sw.operate_topology(topology_name, "deactivate")
     assert "Successful" in response_activate["message"]
     
