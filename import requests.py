@@ -1,101 +1,10 @@
 import requests
 import time
-import os
 import re
 import telnetlib
 import logging
+import os
 import json
-
-
-class NetScoutSw:
-    def __init__(self, ip, user, password):
-        self.ip = ip
-        self.user = user
-        self.password = password
-        self.header = {}
-
-    def send(self, method, url):
-        if len(self.header) == 0:
-            self.login()
-        x = requests.request(method, url, headers=self.header)
-        if x.status_code == 200:
-            return x.json()
-        elif x.status_code == 400:
-            res = x.json()
-            raise NameError(res["message"])
-        else:
-            msg = f"URL {url} failed {x.status_code} {x.reason}"
-            raise RuntimeError(msg)
-
-    def login(self):
-        url = f"http://{self.ip}:8080/api/teststream/v1/session/commands/login"
-        x = requests.post(url, auth=(self.user, self.password))
-        if x.status_code == 200:
-            self.header = {"Authorization": f"Bearer {x.json()['token']}"}
-        else:
-            msg = f"failed to login, {x.status_code} {x.reason}"
-            raise RuntimeError(msg)
-        
-    def logout(self):
-        url = f"http://{self.ip}:8080/api/teststream/v1/session/commands/logout"
-        res = self.send("post", url)
-        print(res)
-
-    def operate_topology(self, name, command=None):
-        """parameters:
-        --------------
-        name: str
-            a valid topology name in system
-        command: str
-            one of ["activate", "deactivate"]
-            
-        response:
-        ----------
-        command: activate or deactivate
-            {
-                "message": "Successful. restopo1 activated. "
-            }
-            OR
-            {
-                "message": " Failed to deactivate topology!. Error type [API Failure!], error string
-                [ERROR: Topology not found! ]"
-            }
-        """
-        base_url = f"http://{self.ip}:8080/api/teststream/v1/topologies/{name}/commands"
-        if command is None:
-            url = base_url
-            method = "get"
-        elif command not in ["activate", "deactivate"]:
-            raise ValueError(f"wrong command: {command}")
-        else:
-            url = f"{base_url}/{command}"
-            method = "post"
-        return self.send(method, url)
-
-
-def activate_topology(topology_name):
-    ip = "10.160.70.74"
-    user = "BMRKAUTO"
-    password = "netscout2"
-    sw = NetScoutSw(ip, user, password)
-    response_activate = response_activate = sw.operate_topology(topology_name, "activate")
-    assert "Successful" in response_activate["message"]
-    
-    time.sleep(30)
-    sw.logout()
-
-
-def deactivate_topology(topology_name):
-    ip = "10.160.70.74"
-    user = "BMRKAUTO"
-    password = "netscout2"
-    sw = NetScoutSw(ip, user, password)
-    response_activate = response_activate = sw.operate_topology(topology_name, "deactivate")
-    assert "Successful" in response_activate["message"]
-    
-    time.sleep(30)
-    sw.logout()
-
 
 class TelnetConnection:
     def __init__(self, host, port=23, timeout=15):
@@ -130,6 +39,7 @@ class TelnetConnection:
     def login(self, username, password):
         self.get_output("login: ")
         self.send_command(username)
+        time.sleep(3)
         self.get_output("Password: ")
         self.send_command(password)
         self.get_output("# ")  # Adjust this prompt as needed
@@ -191,32 +101,21 @@ class TelnetConnection:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    # 从环境变量获取参数
-    atp_str = os.getenv('ATP')
-    atp = json.loads(atp_str)
-    topology_name = os.getenv('TOPOLOGY_NAME')
-    activate_topology(topology_name)
 
     # 远程设备登录信息
-    ip = '10.160.18.237'
+    ip = '10.160.18.223'
     username = 'admin'
     password = 'a'
-    os_file = f"{atp['os_prefix']}-v{atp['os_image_info']['version']}-build{atp['os_build']}-FORTINET.out"
-    apdb_file = ', '.join(entry['file'] for entry in atp['signature']['apdb'])
-    ip = atp['ftp']
-    command_os = f'execute restore image tftp {os_file} {ip}'
-    command_apdb = f'execute restore ips tftp {apdb_file} {ip}'
 
     # 创建 TelnetConnection 对象并执行命令
     telnet_conn = TelnetConnection(ip)
     telnet_conn.connect()
-    time.sleep(10)
+    time.sleep(20)
+    print("connet")
     telnet_conn.login(username, password)
     time.sleep(10)
     telnet_conn.send_command('c g')
-    time.sleep(3)
-    telnet_conn.send_command(command_os)
-    time.sleep(3)
-    telnet_conn.send_command('y')
+    time.sleep(10)
+    telnet_conn.send_command('execute reboot')
     telnet_conn.disconnect()
+    
