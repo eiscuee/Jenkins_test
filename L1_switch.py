@@ -1,6 +1,6 @@
 import requests
 import time
-import pytest
+import os
 
 
 class NetScoutSw:
@@ -69,17 +69,11 @@ class NetScoutSw:
         return self.send(method, url)
 
 
-@pytest.fixture
-def net_scout_sw_instance():
+def test_activate_topology(topology_name):
     ip = "10.160.70.74"
     user = "BMRKAUTO"
     password = "netscout2"
-    return NetScoutSw(ip, user, password)
-
-
-def test_activate_topology(net_scout_sw_instance):
-    sw = net_scout_sw_instance
-    topology_name = pytest.config.getoption('--topology_name')
+    sw = NetScoutSw(ip, user, password)
     response_activate = response_activate = sw.operate_topology(topology_name, "activate")
     assert "Successful" in response_activate["message"]
     
@@ -87,11 +81,18 @@ def test_activate_topology(net_scout_sw_instance):
     sw.logout()
 
 
-def test_deactivate_topology(net_scout_sw_instance):
-    sw = net_scout_sw_instance
-    topology_name = pytest.config.getoption('--topology_name')
+def test_deactivate_topology(topology_name):
+    ip = "10.160.70.74"
+    user = "BMRKAUTO"
+    password = "netscout2"
+    sw = NetScoutSw(ip, user, password)
     response_activate = response_activate = sw.operate_topology(topology_name, "deactivate")
     assert "Successful" in response_activate["message"]
     
     time.sleep(30)
     sw.logout()
+
+if __name__ == "__main__":
+    # 从环境变量获取参数
+    topology_name = os.getenv('TOPOLOGY_NAME')
+    test_activate_topology(topology_name)
