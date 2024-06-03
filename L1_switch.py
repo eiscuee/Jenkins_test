@@ -205,7 +205,9 @@ if __name__ == "__main__":
     password = 'a'
     command = 'execute reboot'
     os_file = f"{atp['os_prefix']}-v{atp['os_image_info']['version']}-build{atp['os_build']}-FORTINET.out"
-    command_os = f"execute restore image tftp {os_file} {atp['ftp']}"
+    mmdb_file = ', '.join(entry['file'] for entry in atp['signature']['mmdb'])
+    command_os = f"execute restore image tftp {os_file} 10.160.57.62"
+    command_mmdb = f"execute restore av tftp {mmdb_file} {atp['ftp']}"
     print(command_os)
 
     # 创建 TelnetConnection 对象并执行命令
@@ -217,7 +219,21 @@ if __name__ == "__main__":
     telnet_conn.send_command('c g')
     time.sleep(3)
     telnet_conn.send_command(command_os)
-    time.sleep(3)
+    time.sleep(10)
     telnet_conn.send_command('y')
-    time.sleep(60)
+    time.sleep(600)
+    telnet_conn.disconnect()
+
+    time.sleep(180)
+    telnet_conn = TelnetConnection(ip)
+    telnet_conn.connect()
+    time.sleep(2)
+    telnet_conn.login(username, password)
+    time.sleep(10)
+    telnet_conn.send_command('c g')
+    time.sleep(3)
+    telnet_conn.send_command(command_mmdb)
+    time.sleep(10)
+    telnet_conn.send_command('y')
+    time.sleep(600)
     telnet_conn.disconnect()
