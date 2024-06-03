@@ -219,4 +219,5 @@ if __name__ == "__main__":
     telnet_conn.send_command(command_os)
     time.sleep(3)
     telnet_conn.send_command('y')
+    time.sleep(60)
     telnet_conn.disconnect()
