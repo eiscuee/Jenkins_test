@@ -205,7 +205,7 @@ if __name__ == "__main__":
     # 创建 TelnetConnection 对象并执行命令
     telnet_conn = TelnetConnection(ip)
     telnet_conn.connect()
-    time.sleep(10)
+    time.sleep(2)
     telnet_conn.login(username, password)
     time.sleep(10)
     telnet_conn.send_command('c g')
