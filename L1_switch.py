@@ -4,7 +4,7 @@ import re
 import telnetlib
 import logging
 import os
-
+import json
 
 class NetScoutSw:
     def __init__(self, ip, user, password):
@@ -194,9 +194,8 @@ if __name__ == "__main__":
     #logging.basicConfig(level=logging.INFO)
     # 从环境变量获取参数
     topology_name = os.getenv('TOPOLOGY_NAME')
-    atp = os.getenv('ATP')
-    print(atp)
-    print(topology_name)
+    atp_str = os.getenv('ATP')
+    atp = json.loads(atp_str)
     activate_topology(topology_name)
     
     # 远程设备登录信息
