@@ -1,0 +1,92 @@
+{
+  "platforms": [
+    {
+      "name": "FGT1801F",
+      "mgmt_ip": "10.160.18.223",
+      "console_ip": "10.160.22.103",
+      "console_port": 2044,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT2601F",
+      "mgmt_ip": "10.160.18.52",
+      "console_ip": "10.160.22.102",
+      "console_port": 2042,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT3001F",
+      "mgmt_ip": "10.160.18.30",
+      "console_ip": "10.160.22.103",
+      "console_port": 2062,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT3501F",
+      "mgmt_ip": "10.160.18.237",
+      "console_ip": "10.160.22.101",
+      "console_port": 2044,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT4201F",
+      "mgmt_ip": "10.160.18.144",
+      "console_ip": "10.160.22.102",
+      "console_port": 2045,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT4401F",
+      "mgmt_ip": "10.160.18.119",
+      "console_ip": "10.160.22.102",
+      "console_port": 2044,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT4801F",
+      "mgmt_ip": "10.160.21.48",
+      "console_ip": "10.160.22.103",
+      "console_port": 2041,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT6501F",
+      "mgmt_ip": "10.160.70.169",
+      "console_ip": "10.160.72.2",
+      "console_port": 2058,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT7040E",
+      "mgmt_ip": "10.160.18.244",
+      "console_ip": "10.160.22.103",
+      "console_port": 2054,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT7040E-2",
+      "mgmt_ip": "10.160.18.221",
+      "console_ip": "10.160.22.103",
+      "console_port": 2053,
+      "username": "admin",
+      "password": "a"
+    },
+    {
+      "name": "FGT7KF",
+      "mgmt_ip": "10.160.18.72",
+      "console_ip": "10.160.22.103",
+      "console_port": 2051,
+      "username": "admin",
+      "password": "a"
+    }
+  ]
+}
