@@ -314,7 +314,7 @@ if __name__ == "__main__":
         os_file = atp['os_image']
     mmdb_file =  f'{atp["signature_path"]}{atp["signature"]["mmdb"][0]["file"]}'
     fldb_file =  f'{atp["signature_path"]}{atp["signature"]["fldb"][0]["file"]}'
-    etdb_file =  f'{atp["signature_path"]}{atp["signature"]["etdb"][0]["file"]}'   
+    #etdb_file =  f'{atp["signature_path"]}{atp["signature"]["etdb"][0]["file"]}'   
     apdb_file =  f'{atp["signature_path"]}{atp["signature"]["apdb"][0]["file"]}'
     nids_file =  f'{atp["signature_path"]}{atp["signature"]["nids"][0]["file"]}'
     isdb_file =  f'{atp["signature_path"]}{atp["signature"]["isdb"][0]["file"]}'
@@ -337,7 +337,7 @@ if __name__ == "__main__":
     con.load_signature(command_isdb)
     con.load_signature(command_mmdb)
     con.load_signature(command_fldb)
-    con.load_signature(command_etdb)
+    #con.load_signature(command_etdb)
     con.clear_line()
     con.login_fortigate()
     con.clear_session()
