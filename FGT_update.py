@@ -299,7 +299,7 @@ if __name__ == "__main__":
     atp_setting_file = sys.argv[1]
     try:
         with open(atp_setting_file, 'r') as file:
-            atp = json.loads(file)
+            atp = json.load(file)
         logger.info(atp)
     except Exception as e:
         print(f"Failed to load ATP settings: {e}")
