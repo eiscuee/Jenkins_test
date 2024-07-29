@@ -293,10 +293,10 @@ if __name__ == "__main__":
     topology_name = os.getenv('TOPOLOGY_NAME')
     #topology_name = 'FGT6501F'
     if len(sys.argv) < 2:
-        logger.info("Usage: python FGT_update.py <atp)setting.json>")
+        logger.info("Usage: python FGT_update.py <atp_setting.json>")
         sys.exit(1)
     #atp = {"ftp": "10.160.57.62", "os_image": "FGT_6000F-v7-build1677-FORTINET.out", "os_image_info": {"project": "FortiOS", "version": "7", "build": "3376", "file_pattern": "FGT_3501F-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.4.4dev", "os_build": "3376", "os_prefix": "FGT_3501F", "os_label": "Interim Build < Target Version >", "ips_image": "", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0183", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3}\\.pkg", "branch": "main"}, "ips_ver": "7.0.16dev", "ips_build": "0183", "ips_label": "Interim Build", "config": "test-config-BMRK2", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "27.789", "file": "apdb_OS7.4.0_27.00789.APDB.pkg"}], "fmwp": [], "iotd": [], "isdb": [{"version": "27.785", "file": "isdb_OS7.4.0_27.00785.ISDB.pkg"}], "nids": [{"version": "27.790", "file": "nids_OS7.4.0_27.00790.NIDS.pkg"}], "otdb": [], "otdp": [], "etdb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.ETDB.High.pkg"}], "exdb": [{"version": "92.04510", "file": "/exdb/vsigupdate-OS7.0.0_92.04510.EXDB.pkg"}], "mmdb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.MMDB.pkg"}], "fldb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.FLDB.pkg"}], "avai": [{"version": "2.16370", "file": "/avai/vsigupdate-OS7.0.0_2.16370.AVAI.pkg"}]}, "signature_path": "signature/7.0"}
-    atp_setting_file = sys.argv[1]
+    atp_setting_file = 'atp_setting.json'
     with open(atp_setting_file, 'r') as file:
         atp = json.loads(atp_setting_file)
     device = get_device_info(topology_name)
