@@ -320,7 +320,7 @@ if __name__ == "__main__":
     isdb_file =  f'{atp["signature_path"]}{atp["signature"]["isdb"][0]["file"]}'
     command_mmdb = f"execute restore av tftp {mmdb_file} {atp['ftp']}"
     command_fldb = f"execute restore av tftp {fldb_file} {atp['ftp']}"
-    command_etdb = f"execute restore av tftp {etdb_file} {atp['ftp']}"
+    #command_etdb = f"execute restore av tftp {etdb_file} {atp['ftp']}"
     command_apdb = f"execute restore ips tftp {apdb_file} {atp['ftp']}"
     command_nids = f"execute restore ips tftp {nids_file} {atp['ftp']}"
     command_isdb = f"execute restore ips tftp {isdb_file} {atp['ftp']}"
