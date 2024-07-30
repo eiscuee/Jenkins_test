@@ -182,13 +182,13 @@ class FortigateConsole(TelnetConnection):
                 exp=r"n\)",
             )
             self.send_command("y", newline=False)
-            """
+
             def get_image_func():
                 out = self.get_output()
                 return "Get image from tftp server OK." in out
 
             result = wait_until(get_image_func, timeout=timeout, period=5)
-"""
+
             end_time = time() + timeout
             print(end_time)
             while time() < end_time:
