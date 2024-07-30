@@ -173,7 +173,7 @@ class FortigateConsole(TelnetConnection):
                 break
             self.send_command("end", exp="#", display=False)
 
-    def load_image(self, file, tftp_ip, timeout=600):
+    def load_image(self, file, tftp_ip, timeout=1200):
         try:
             #self.back_to_root_level()
             self.send_command("config global", exp="(global)", must_find=True)
