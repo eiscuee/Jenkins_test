@@ -189,7 +189,7 @@ class FortigateConsole(TelnetConnection):
 
             result = wait_until(get_image_func, timeout=timeout, period=5)
 
-            end_time = time() + timeout
+            end_time = time() + 60
             print(end_time)
             while time() < end_time:
                 out = self.get_output()
