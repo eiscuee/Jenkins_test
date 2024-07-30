@@ -197,6 +197,7 @@ class FortigateConsole(TelnetConnection):
                     self.send_command("y", newline=False)
 
             self.wait_fortigate_bootup()
+            self.login_fortigate()
             # self.set_password_after_reset()
             logger.info("load image done")
         except Exception as e:
