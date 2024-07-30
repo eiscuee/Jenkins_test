@@ -204,10 +204,8 @@ class FortigateConsole(TelnetConnection):
 
     def load_signature(self, command):
         try:
-            if not self.output_contains("(global)"):
-                self.send_command("config global", exp="(global)", must_find=True)
-            self.send_command(command, exp=r"n\)", must_find=True)
-            self.send_command("y", newline=False, exp="tftp server OK", timeout=20)
+            self.send_command(command, exp=r"n\)", must_find=True, timeout=60)
+            self.send_command("y", newline=False, exp="tftp server OK", timeout=60)
         except Exception as e:
             logger.exception("Error when update signatrue", exc_info=e)
 
@@ -290,8 +288,9 @@ class FortigateConsole(TelnetConnection):
 
 
 if __name__ == "__main__":
-    topology_name = os.getenv('TOPOLOGY_NAME')
-    #topology_name = 'FGT6501F'
+    #topology_name = os.getenv('TOPOLOGY_NAME')
+    topology_name = 'FGT7040E-2'
+    """
     if len(sys.argv) < 2:
         logger.info("Usage: python FGT_update.py <atp_setting.json>")
         sys.exit(1)
@@ -303,8 +302,8 @@ if __name__ == "__main__":
         logger.info(atp)
     except Exception as e:
         print(f"Failed to load ATP settings: {e}")
-    
-    #atp = {"ftp": "10.160.57.62", "os_image": "FGT_6000F-v7-build1677-FORTINET.out", "os_image_info": {"project": "FortiOS", "version": "7", "build": "3376", "file_pattern": "FGT_3501F-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.4.4dev", "os_build": "3376", "os_prefix": "FGT_3501F", "os_label": "Interim Build < Target Version >", "ips_image": "", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0183", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3}\\.pkg", "branch": "main"}, "ips_ver": "7.0.16dev", "ips_build": "0183", "ips_label": "Interim Build", "config": "test-config-BMRK2", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "27.789", "file": "apdb_OS7.4.0_27.00789.APDB.pkg"}], "fmwp": [], "iotd": [], "isdb": [{"version": "27.785", "file": "isdb_OS7.4.0_27.00785.ISDB.pkg"}], "nids": [{"version": "27.790", "file": "nids_OS7.4.0_27.00790.NIDS.pkg"}], "otdb": [], "otdp": [], "etdb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.ETDB.High.pkg"}], "exdb": [{"version": "92.04510", "file": "/exdb/vsigupdate-OS7.0.0_92.04510.EXDB.pkg"}], "mmdb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.MMDB.pkg"}], "fldb": [{"version": "92.03702", "file": "vsigupdate-OS7.4.0_92.03702.FLDB.pkg"}], "avai": [{"version": "2.16370", "file": "/avai/vsigupdate-OS7.0.0_2.16370.AVAI.pkg"}]}, "signature_path": "signature/7.0"}
+    """
+    atp = {"ftp": "10.160.90.106", "os_image": "/images/FortiOS/v7.00/build1681/FGT_7000E-v7-build1681-FORTINET.out", "os_image_info": {"project": "FortiOS", "version": "7", "build": "1681", "file_pattern": "FGT_7000E-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.2.9dev", "os_build": "1681", "os_prefix": "FGT_7000E", "os_label": "Interim Build < Target Version >", "ips_image": "/images/IPSEngine/v7.00/build0342/flen-fos7.2-7.342.pkg", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0342", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3,4}\\.pkg", "branch": "main"}, "ips_ver": "7.2.9dev", "ips_build": "0342", "ips_label": "Interim Build", "config": "BMRK-SLBC-7040E-2", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "28.833", "file": "/apdb/apdb-720-28.833.pkg"}], "fmwp": [{"version": "24.070", "file": "/fmwp/fmwp-720-24.070.pkg"}], "iotd": [{"version": "28.833", "file": "/iotd/iotd-720-28.833.pkg"}], "isdb": [{"version": "28.827", "file": "/isdb/isdb-720-28.827.pkg"}], "nids": [{"version": "28.833", "file": "/nids/nids-720-28.833.pkg"}], "otdb": [], "otdp": [], "avdb": [{"version": "92.06178", "file": "/avdb/vsigupdate-OS7.2.0_92.06178.ETDB.High.pkg"}], "exdb": [{"version": "92.06061", "file": "/exdb/vsigupdate-OS7.2.0_92.06061.EXDB.pkg"}], "mmdb": [{"version": "92.06177", "file": "/mmdb/vsigupdate-OS7.2.0_92.06177.MMDB.pkg"}], "fldb": [{"version": "92.06178", "file": "/fldb/vsigupdate-OS7.2.0_92.06178.FLDB.pkg"}], "avai": [{"version": "2.17356", "file": "/avai/vsigupdate-OS7.2.0_2.17356.AVAI.pkg"}]}, "signature_path": "signature/7.2"}
     device = get_device_info(topology_name)
     
     tftp_ip = atp['ftp']
@@ -314,13 +313,13 @@ if __name__ == "__main__":
         os_file = atp['os_image']
     mmdb_file =  f'{atp["signature_path"]}{atp["signature"]["mmdb"][0]["file"]}'
     fldb_file =  f'{atp["signature_path"]}{atp["signature"]["fldb"][0]["file"]}'
-    #etdb_file =  f'{atp["signature_path"]}{atp["signature"]["etdb"][0]["file"]}'   
+    etdb_file =  f'{atp["signature_path"]}{atp["signature"]["avdb"][0]["file"]}'   
     apdb_file =  f'{atp["signature_path"]}{atp["signature"]["apdb"][0]["file"]}'
     nids_file =  f'{atp["signature_path"]}{atp["signature"]["nids"][0]["file"]}'
     isdb_file =  f'{atp["signature_path"]}{atp["signature"]["isdb"][0]["file"]}'
     command_mmdb = f"execute restore av tftp {mmdb_file} {atp['ftp']}"
     command_fldb = f"execute restore av tftp {fldb_file} {atp['ftp']}"
-    #command_etdb = f"execute restore av tftp {etdb_file} {atp['ftp']}"
+    command_etdb = f"execute restore av tftp {etdb_file} {atp['ftp']}"
     command_apdb = f"execute restore ips tftp {apdb_file} {atp['ftp']}"
     command_nids = f"execute restore ips tftp {nids_file} {atp['ftp']}"
     command_isdb = f"execute restore ips tftp {isdb_file} {atp['ftp']}"
@@ -331,13 +330,14 @@ if __name__ == "__main__":
     con.clear_line()
     con.login_fortigate()
     con.clear_line()
-    con.load_image(os_file, tftp_ip)
+    #con.load_image(os_file, tftp_ip)
+    con.send_command("config global")
     con.load_signature(command_apdb)
     con.load_signature(command_nids)
     con.load_signature(command_isdb)
     con.load_signature(command_mmdb)
     con.load_signature(command_fldb)
-    #con.load_signature(command_etdb)
+    con.load_signature(command_etdb)
     con.clear_line()
     con.login_fortigate()
     con.clear_session()
