@@ -189,7 +189,7 @@ class FortigateConsole(TelnetConnection):
 
             result = wait_until(get_image_func, timeout=timeout, period=5)
 
-            end_time = time() + 60
+            end_time = time() + 120
             print(end_time)
             while time() < end_time:
                 out = self.get_output()
@@ -197,8 +197,17 @@ class FortigateConsole(TelnetConnection):
                     self.send_command("y", newline=False)
 
             self.wait_fortigate_bootup()
-            self.login_fortigate()
-            # self.set_password_after_reset()
+            #log in after reboot
+            self.send_command(f"{self.username}", "Password:")
+            if self.output_contains("Password:"):
+                self.send_command(
+                    f"{self.password}", exp=["#", "Login incorrect"]
+                )
+                if self.output_contains("Login incorrect"):
+                    logger.info("Current password is incorrect")
+                    self.set_password_after_reset()
+                if self.output_contains("#"):
+                    logger.info("Login Successful")
             logger.info("load image done")
         except Exception as e:
             logger.exception("Error when loading image", exc_info=e)
