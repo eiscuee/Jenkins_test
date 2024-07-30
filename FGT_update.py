@@ -215,7 +215,14 @@ class FortigateConsole(TelnetConnection):
     def load_signature(self, command):
         try:
             self.send_command(command, exp=r"n\)", must_find=True, timeout=60)
-            self.send_command("y", newline=False, exp="tftp server OK", timeout=60)
+            self.send_command("y", newline=False)
+
+            def get_signature_status():
+                out = self.get_output()
+                return "from tftp server OK" in out
+            
+            result = wait_until(get_signature_status, timeout=120, period=5)
+
         except Exception as e:
             logger.exception("Error when update signatrue", exc_info=e)
 
@@ -348,6 +355,4 @@ if __name__ == "__main__":
     con.load_signature(command_mmdb)
     con.load_signature(command_fldb)
     con.load_signature(command_etdb)
-    con.clear_line()
-    con.login_fortigate()
     con.clear_session()
