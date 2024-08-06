@@ -324,6 +324,20 @@ if __name__ == "__main__":
     device = get_device_info(topology_name)
     
     tftp_ip = atp['ftp']
+    build = atp['os_build']
+    if 1 <= build <= 1081:
+        os_version = "7.0"
+    elif 1082 <= build <= 2249:
+        os_version = "7.2"
+    elif 2250 <= build <= 3329:
+        os_version = "7.4"
+    elif 3330 <= build <= 9999:
+        os_version = "7.6"
+    else:
+        raise ValueError(f"OS_BUILD out of expected range: {build}")
+    with open('os_version.txt', 'w') as file:
+        file.write(os_version)
+    
     if not atp['os_image']:
         os_file = f"{atp['os_prefix']}-v{atp['os_image_info']['version']}-build{atp['os_build']}-FORTINET.out"
     else:
