@@ -324,7 +324,7 @@ if __name__ == "__main__":
     device = get_device_info(topology_name)
     
     tftp_ip = atp['ftp']
-    build = atp['os_build']
+    build = int(atp['os_build'])
     if 1 <= build <= 1081:
         os_version = "7.0"
     elif 1082 <= build <= 2249:
