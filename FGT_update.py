@@ -186,8 +186,7 @@ class FortigateConsole(TelnetConnection):
             def get_image_func():
                 out = self.get_output()
                 return "Get image from tftp server OK." in out
-
-            result = wait_until(get_image_func, timeout=timeout, period=5)
+            result = wait_until(get_image_func, timeout=timeout, period=3)
 
             end_time = time() + 120
             print(end_time)
@@ -306,7 +305,7 @@ class FortigateConsole(TelnetConnection):
 
 if __name__ == "__main__":
     topology_name = os.getenv('TOPOLOGY_NAME')
-    #topology_name = 'FGT7040E-2'
+    #topology_name = 'FGT6501F'
     
     if len(sys.argv) < 2:
         logger.info("Usage: python FGT_update.py <atp_setting.json>")
@@ -320,7 +319,7 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Failed to load ATP settings: {e}")
     
-    #atp = {"ftp": "10.160.90.106", "os_image": "/images/FortiOS/v7.00/build1681/FGT_7000E-v7-build1681-FORTINET.out", "os_image_info": {"project": "FortiOS", "version": "7", "build": "1681", "file_pattern": "FGT_7000E-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.2.9dev", "os_build": "1681", "os_prefix": "FGT_7000E", "os_label": "Interim Build < Target Version >", "ips_image": "/images/IPSEngine/v7.00/build0342/flen-fos7.2-7.342.pkg", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0342", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3,4}\\.pkg", "branch": "main"}, "ips_ver": "7.2.9dev", "ips_build": "0342", "ips_label": "Interim Build", "config": "BMRK-SLBC-7040E-2", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "28.833", "file": "/apdb/apdb-720-28.833.pkg"}], "fmwp": [{"version": "24.070", "file": "/fmwp/fmwp-720-24.070.pkg"}], "iotd": [{"version": "28.833", "file": "/iotd/iotd-720-28.833.pkg"}], "isdb": [{"version": "28.827", "file": "/isdb/isdb-720-28.827.pkg"}], "nids": [{"version": "28.833", "file": "/nids/nids-720-28.833.pkg"}], "otdb": [], "otdp": [], "avdb": [{"version": "92.06178", "file": "/avdb/vsigupdate-OS7.2.0_92.06178.ETDB.High.pkg"}], "exdb": [{"version": "92.06061", "file": "/exdb/vsigupdate-OS7.2.0_92.06061.EXDB.pkg"}], "mmdb": [{"version": "92.06177", "file": "/mmdb/vsigupdate-OS7.2.0_92.06177.MMDB.pkg"}], "fldb": [{"version": "92.06178", "file": "/fldb/vsigupdate-OS7.2.0_92.06178.FLDB.pkg"}], "avai": [{"version": "2.17356", "file": "/avai/vsigupdate-OS7.2.0_2.17356.AVAI.pkg"}]}, "signature_path": "signature/7.2"}
+    #atp = {"ftp": "10.160.90.106", "os_image": "/images/FortiOS/v7.00/build1686/FGT_6000F-v7-build1686-FORTINET.out", "os_image_info": {"project": "FortiOS", "version": "7", "build": "1686", "file_pattern": "FGT_6000F-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.2.9dev", "os_build": "1686", "os_prefix": "FGT_6000F", "os_label": "Interim Build < Target Version >", "ips_image": "/images/IPSEngine/v7.00/build0342/flen-fos7.2-7.342.pkg", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0342", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3,4}\\.pkg", "branch": "main"}, "ips_ver": "7.2.9dev", "ips_build": "0342", "ips_label": "Interim Build", "config": "BMRK-SLBC-6501F", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "28.839", "file": "/apdb/apdb-720-28.839.pkg"}], "fmwp": [{"version": "24.071", "file": "/fmwp/fmwp-720-24.071.pkg"}], "iotd": [{"version": "28.838", "file": "/iotd/iotd-720-28.838.pkg"}], "isdb": [{"version": "28.839", "file": "/isdb/isdb-720-28.839.pkg"}], "nids": [{"version": "28.839", "file": "/nids/nids-720-28.839.pkg"}], "otdb": [], "otdp": [], "avdb": [{"version": "92.06370", "file": "/avdb/vsigupdate-OS7.2.0_92.06370.ETDB.High.pkg"}], "exdb": [{"version": "92.06229", "file": "/exdb/vsigupdate-OS7.2.0_92.06229.EXDB.pkg"}], "mmdb": [{"version": "92.06370", "file": "/mmdb/vsigupdate-OS7.2.0_92.06370.MMDB.pkg"}], "fldb": [{"version": "92.06370", "file": "/fldb/vsigupdate-OS7.2.0_92.06370.FLDB.pkg"}], "avai": [{"version": "2.17480", "file": "/avai/vsigupdate-OS7.2.0_2.17480.AVAI.pkg"}]}, "signature_path": "signature/7.2"}
     device = get_device_info(topology_name)
     
     tftp_ip = atp['ftp']
