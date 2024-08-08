@@ -91,8 +91,8 @@ def activate_topology(topology_name):
 
 def deactivate_topology(topology_name):
     ip = "10.160.70.74"
-    user = "BMRKAUTO"
-    password = "netscout2"
+    user = "josie"
+    password = "a"
     sw = NetScoutSw(ip, user, password)
     response_activate = response_activate = sw.operate_topology(map_topology(topology_name), "deactivate")
     assert "Successful" in response_activate["message"]
@@ -103,6 +103,7 @@ def deactivate_topology(topology_name):
 
 if __name__ == "__main__":
     topology_name = os.getenv('TOPOLOGY_NAME')
+    #topology_name = 'FGT6501F'
     L1_status = os.getenv('L1_status')
     if L1_status == 'activate':
         activate_topology(topology_name)
