@@ -347,12 +347,14 @@ if __name__ == "__main__":
     apdb_file =  f'{atp["signature_path"]}{atp["signature"]["apdb"][0]["file"]}'
     nids_file =  f'{atp["signature_path"]}{atp["signature"]["nids"][0]["file"]}'
     isdb_file =  f'{atp["signature_path"]}{atp["signature"]["isdb"][0]["file"]}'
+    mudb_file = f'{atp["signature_path"]}{atp["signature"]["mudb"][0]["file"]}'
     command_mmdb = f"execute restore av tftp {mmdb_file} {atp['ftp']}"
     command_fldb = f"execute restore av tftp {fldb_file} {atp['ftp']}"
     command_etdb = f"execute restore av tftp {etdb_file} {atp['ftp']}"
     command_apdb = f"execute restore ips tftp {apdb_file} {atp['ftp']}"
     command_nids = f"execute restore ips tftp {nids_file} {atp['ftp']}"
     command_isdb = f"execute restore ips tftp {isdb_file} {atp['ftp']}"
+    command_mudb = f"execute restore ips tftp {mudb_file} {atp['ftp']}"
 
     con = FortigateConsole(
         device['console_ip'], port=device['console_port'], username=device['username'], password=device['password'],
@@ -365,6 +367,7 @@ if __name__ == "__main__":
     con.load_signature(command_apdb)
     con.load_signature(command_nids)
     con.load_signature(command_isdb)
+    con.load_signature(command_mudb)
     con.load_signature(command_mmdb)
     con.load_signature(command_fldb)
     con.load_signature(command_etdb)
