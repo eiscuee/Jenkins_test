@@ -100,6 +100,27 @@ class FortigateConsole(TelnetConnection):
         logger.info(f"Line {line_num} cleared")
         self.disconnect()
 
+    def load_signature_if_exists(self, signature_type, command):
+        """Check if the signature file exists and execute the update."""
+        if not command:
+            logger.info(f"{signature_type} signature file not found, skipping update")
+            return
+        try:
+            self.send_command(command, exp=r"n\)", must_find=True, timeout=60)
+            self.send_command("y", newline=False)
+
+            def get_signature_status():
+                out = self.get_output()
+                return "from tftp server OK" in out
+
+            result = wait_until(get_signature_status, timeout=120, period=5)
+            if result:
+                logger.info(f"{signature_type} signature update successful")
+            else:
+                logger.info(f"{signature_type} signature update failed")
+        except Exception as e:
+            logger.exception(f"Error occurred during {signature_type} signature update", exc_info=e)
+
     def login_fortigate(self):
         logger.info("Login to fortigate from console")
         self.clear_line()
@@ -211,20 +232,6 @@ class FortigateConsole(TelnetConnection):
         except Exception as e:
             logger.exception("Error when loading image", exc_info=e)
 
-    def load_signature(self, command):
-        try:
-            self.send_command(command, exp=r"n\)", must_find=True, timeout=60)
-            self.send_command("y", newline=False)
-
-            def get_signature_status():
-                out = self.get_output()
-                return "from tftp server OK" in out
-            
-            result = wait_until(get_signature_status, timeout=120, period=5)
-
-        except Exception as e:
-            logger.exception("Error when update signatrue", exc_info=e)
-
     def restore_settings(self, file, tftp_ip):
         self.back_to_root_level()
         self.send_command("config global", exp="(global)")
@@ -321,8 +328,8 @@ if __name__ == "__main__":
     
     #atp = {"ftp": "10.160.90.106", "os_image": "/images/FortiOS/v7.00/build1686/FGT_6000F-v7-build1686-FORTINET.out", "os_image_info": {"project": "FortiOS", "version": "7", "build": "1686", "file_pattern": "FGT_6000F-.*\\.out", "branch": "main"}, "os_product": "FortiOS", "os_ver": "7.2.9dev", "os_build": "1686", "os_prefix": "FGT_6000F", "os_label": "Interim Build < Target Version >", "ips_image": "/images/IPSEngine/v7.00/build0342/flen-fos7.2-7.342.pkg", "ips_image_info": {"project": "IPSengine", "version": "7", "build": "0342", "file_pattern": "flen-fos\\d+\\.\\d+-\\d\\.\\d{3,4}\\.pkg", "branch": "main"}, "ips_ver": "7.2.9dev", "ips_build": "0342", "ips_label": "Interim Build", "config": "BMRK-SLBC-6501F", "config_file_id": "", "config_version": "", "config_build": "", "config_checksum": "", "signature": {"apdb": [{"version": "28.839", "file": "/apdb/apdb-720-28.839.pkg"}], "fmwp": [{"version": "24.071", "file": "/fmwp/fmwp-720-24.071.pkg"}], "iotd": [{"version": "28.838", "file": "/iotd/iotd-720-28.838.pkg"}], "isdb": [{"version": "28.839", "file": "/isdb/isdb-720-28.839.pkg"}], "nids": [{"version": "28.839", "file": "/nids/nids-720-28.839.pkg"}], "otdb": [], "otdp": [], "avdb": [{"version": "92.06370", "file": "/avdb/vsigupdate-OS7.2.0_92.06370.ETDB.High.pkg"}], "exdb": [{"version": "92.06229", "file": "/exdb/vsigupdate-OS7.2.0_92.06229.EXDB.pkg"}], "mmdb": [{"version": "92.06370", "file": "/mmdb/vsigupdate-OS7.2.0_92.06370.MMDB.pkg"}], "fldb": [{"version": "92.06370", "file": "/fldb/vsigupdate-OS7.2.0_92.06370.FLDB.pkg"}], "avai": [{"version": "2.17480", "file": "/avai/vsigupdate-OS7.2.0_2.17480.AVAI.pkg"}]}, "signature_path": "signature/7.2"}
     device = get_device_info(topology_name)
-    
     tftp_ip = atp['ftp']
+
     build = int(atp['os_build'])
     if 1 <= build <= 1081:
         os_version = "7.0"
@@ -341,20 +348,6 @@ if __name__ == "__main__":
         os_file = f"{atp['os_prefix']}-v{atp['os_image_info']['version']}-build{atp['os_build']}-FORTINET.out"
     else:
         os_file = atp['os_image']
-    mmdb_file =  f'{atp["signature_path"]}{atp["signature"]["mmdb"][0]["file"]}'
-    fldb_file =  f'{atp["signature_path"]}{atp["signature"]["fldb"][0]["file"]}'
-    etdb_file =  f'{atp["signature_path"]}{atp["signature"]["avdb"][0]["file"]}'   
-    apdb_file =  f'{atp["signature_path"]}{atp["signature"]["apdb"][0]["file"]}'
-    nids_file =  f'{atp["signature_path"]}{atp["signature"]["nids"][0]["file"]}'
-    isdb_file =  f'{atp["signature_path"]}{atp["signature"]["isdb"][0]["file"]}'
-    mudb_file = f'{atp["signature_path"]}{atp["signature"]["mudb"][0]["file"]}'
-    command_mmdb = f"execute restore av tftp {mmdb_file} {atp['ftp']}"
-    command_fldb = f"execute restore av tftp {fldb_file} {atp['ftp']}"
-    command_etdb = f"execute restore av tftp {etdb_file} {atp['ftp']}"
-    command_apdb = f"execute restore ips tftp {apdb_file} {atp['ftp']}"
-    command_nids = f"execute restore ips tftp {nids_file} {atp['ftp']}"
-    command_isdb = f"execute restore ips tftp {isdb_file} {atp['ftp']}"
-    command_mudb = f"execute restore ips tftp {mudb_file} {atp['ftp']}"
 
     con = FortigateConsole(
         device['console_ip'], port=device['console_port'], username=device['username'], password=device['password'],
@@ -364,11 +357,14 @@ if __name__ == "__main__":
     con.clear_line()
     con.load_image(os_file, tftp_ip)
     con.send_command("config global")
-    con.load_signature(command_apdb)
-    con.load_signature(command_nids)
-    con.load_signature(command_isdb)
-    con.load_signature(command_mudb)
-    con.load_signature(command_mmdb)
-    con.load_signature(command_fldb)
-    con.load_signature(command_etdb)
+    for signature_type, command in {
+        "apdb": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['apdb'][0]['file']} {tftp_ip}",
+        "nids": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['nids'][0]['file']} {tftp_ip}",
+        "isdb": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['isdb'][0]['file']} {tftp_ip}",
+        "mudb": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['mudb'][0]['file']} {tftp_ip}" if "mudb" in atp["signature"] else None,
+        "mmdb": f"execute restore av tftp {atp["signature_path"]}{atp['signature']['mmdb'][0]['file']} {tftp_ip}",
+        "fldb": f"execute restore av tftp {atp["signature_path"]}{atp['signature']['fldb'][0]['file']} {tftp_ip}",
+        "etdb": f"execute restore av tftp {atp["signature_path"]}{atp['signature']['avdb'][0]['file']} {tftp_ip}"
+    }.items():
+        con.load_signature_if_exists(signature_type, command)
     con.clear_session()
