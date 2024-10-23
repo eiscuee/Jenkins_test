@@ -358,13 +358,13 @@ if __name__ == "__main__":
     con.load_image(os_file, tftp_ip)
     con.send_command("config global")
     for signature_type, command in {
-        "apdb": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['apdb'][0]['file']} {tftp_ip}",
-        "nids": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['nids'][0]['file']} {tftp_ip}",
-        "isdb": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['isdb'][0]['file']} {tftp_ip}",
-        "mudb": f"execute restore ips tftp {atp["signature_path"]}{atp['signature']['mudb'][0]['file']} {tftp_ip}" if "mudb" in atp["signature"] else None,
-        "mmdb": f"execute restore av tftp {atp["signature_path"]}{atp['signature']['mmdb'][0]['file']} {tftp_ip}",
-        "fldb": f"execute restore av tftp {atp["signature_path"]}{atp['signature']['fldb'][0]['file']} {tftp_ip}",
-        "etdb": f"execute restore av tftp {atp["signature_path"]}{atp['signature']['avdb'][0]['file']} {tftp_ip}"
+        "apdb": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['apdb'][0]['file']} {tftp_ip}",
+        "nids": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['nids'][0]['file']} {tftp_ip}",
+        "isdb": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['isdb'][0]['file']} {tftp_ip}",
+        "mudb": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['mudb'][0]['file']} {tftp_ip}" if "mudb" in atp["signature"] else None,
+        "mmdb": f"execute restore av tftp {atp['signature_path']}{atp['signature']['mmdb'][0]['file']} {tftp_ip}",
+        "fldb": f"execute restore av tftp {atp['signature_path']}{atp['signature']['fldb'][0]['file']} {tftp_ip}",
+        "etdb": f"execute restore av tftp {atp['signature_path']}{atp['signature']['avdb'][0]['file']} {tftp_ip}"
     }.items():
         con.load_signature_if_exists(signature_type, command)
     con.clear_session()
