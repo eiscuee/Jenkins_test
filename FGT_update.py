@@ -361,7 +361,11 @@ if __name__ == "__main__":
         "apdb": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['apdb'][0]['file']} {tftp_ip}",
         "nids": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['nids'][0]['file']} {tftp_ip}",
         "isdb": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['isdb'][0]['file']} {tftp_ip}",
-        "mudb": f"execute restore ips tftp {atp['signature_path']}{atp['signature']['mudb'][0]['file']} {tftp_ip}" if "mudb" in atp["signature"] else None,
+        "mudb": (
+            f"execute restore ips tftp {atp['signature_path']}{atp['signature']['mudb'][0]['file']} {tftp_ip}"
+            if "mudb" in atp["signature"] and atp["signature"]["mudb"]
+            else "execute restore ips tftp signature/7.4/mudb/latestMalwareFile_05.356.pkg 10.160.90.106"
+        ),
         "mmdb": f"execute restore av tftp {atp['signature_path']}{atp['signature']['mmdb'][0]['file']} {tftp_ip}",
         "fldb": f"execute restore av tftp {atp['signature_path']}{atp['signature']['fldb'][0]['file']} {tftp_ip}",
         "etdb": f"execute restore av tftp {atp['signature_path']}{atp['signature']['avdb'][0]['file']} {tftp_ip}"
